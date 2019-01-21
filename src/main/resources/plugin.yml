@@ -1,0 +1,8 @@
+main: com.gmail.ak1cec0ld.plugins.racing.Racing
+name: RaceGame
+api-version: 1.13
+version: 0.0.1
+author: 1cec0ld
+description: Set up races in specific spots!
+prefix: Race
+commands:
