@@ -86,7 +86,7 @@ public class CommandListener {
         });
     }
     private void registerResults(String category){
-        CommandAPI.getInstance().register(COMMAND_ALIAS, ALIASES, arguments, (sender,args)->{
+        CommandAPI.getInstance().register(COMMAND_ALIAS, CommandPermission.NONE, ALIASES, arguments, (sender,args)->{
             TreeMap<Integer, String> results = ResultManager.getResults(args[0].toString(), category);
             sender.sendMessage("Results:");
             for(Entry<Integer, String> each : results.entrySet()){
