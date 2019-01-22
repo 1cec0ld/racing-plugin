@@ -85,7 +85,6 @@ public class MapManager {
     }
 
     public static void updateBoard(Location loc, String category, TreeMap<Integer,String> scores) {
-        plugin.info("updateboard " + scores.size());
         int col = 0;
         Block b = loc.getBlock();
         Block target;

@@ -8,10 +8,15 @@ import org.bukkit.event.Listener;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 import com.gmail.ak1cec0ld.plugins.racing.PlayerManager;
+import com.gmail.ak1cec0ld.plugins.racing.Racing;
 
 public class MountListener implements Listener{
     
     
+    public MountListener(Racing racing) {
+        racing.getServer().getPluginManager().registerEvents(this, racing);
+    }
+
     @EventHandler
     public void onMountEntity(EntityMountEvent event){
         if(!(event.getEntity() instanceof Player))return;

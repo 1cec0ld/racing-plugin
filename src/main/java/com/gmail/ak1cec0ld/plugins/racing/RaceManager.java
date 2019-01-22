@@ -29,14 +29,15 @@ public class RaceManager {
     }
     
     public static boolean addCheckpoint(String raceName, Location loc){
-        int count = ConfigManager.getCheckpointLocations(raceName).size();
-        if(!ConfigManager.setCheckpoint(raceName, count+1, loc)){
+        int count = ConfigManager.getCheckpointCount(raceName);
+        if(!ConfigManager.setCheckpoint(raceName, loc)){
             plugin.warn("Config file can't create checkpoint!");
             return false;
         }
         
-        if(!MapManager.createCheckpointSign(raceName, loc, count)){
+        if(!MapManager.createCheckpointSign(raceName, loc, count+1)){
             plugin.warn("Tried to create a checkpoint at an invalid spot!");
+            ConfigManager.removeCheckpoint(raceName);
             return false;
         }
         return true;

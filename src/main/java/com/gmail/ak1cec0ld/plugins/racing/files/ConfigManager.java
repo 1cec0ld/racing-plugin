@@ -1,8 +1,6 @@
 package com.gmail.ak1cec0ld.plugins.racing.files;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -37,18 +35,8 @@ public class ConfigManager {
                             config.getInt(raceName+".leaderboard.z"));
     }
     
-    public static List<Location> getCheckpointLocations(String raceName){
-        List<Location> points = new ArrayList<Location>();
-        World raceWorld = Bukkit.getWorld(config.getString(raceName+".world"));
-        if(!config.contains(raceName+".checkpoints"))return points;
-        for(String each : config.getConfigurationSection(raceName+".checkpoints").getKeys(false)){
-            points.add(new Location(raceWorld,
-                                    config.getInt(raceName+".checkpoints."+each+".x"),
-                                    config.getInt(raceName+".checkpoints."+each+".y"),
-                                    config.getInt(raceName+".checkpoints."+each+".z"))
-            );
-        }
-        return points;
+    public static int getCheckpointCount(String raceName){
+        return config.getInt(raceName+".checkpoints",0);
     }
     
     public static void setWorld(String raceName, World world){
@@ -56,16 +44,19 @@ public class ConfigManager {
         yml.save();
     }
     
-    public static boolean setCheckpoint(String raceName, int number, Location loc){
+    public static boolean setCheckpoint(String raceName, Location loc){
         if(!loc.getWorld().getName().equals(config.getString(raceName+".world"))){
             plugin.warn("Tried to put a checkpoint in another world, that's not supported yet!");
             return false;
         }
-        config.set(raceName+".checkpoints."+number+".x", loc.getBlockX());
-        config.set(raceName+".checkpoints."+number+".y", loc.getBlockY());
-        config.set(raceName+".checkpoints."+number+".z", loc.getBlockZ());
+        config.set(raceName+".checkpoints", config.getInt(raceName+".checkpoints",0)+1);
         yml.save();
         return true;
+    }
+    
+    public static void removeCheckpoint(String raceName){
+        config.set(raceName+".checkpoints", config.getInt(raceName+".checkpoints",1)-1);
+        yml.save();
     }
     
     public static boolean setLeaderBoardLoc(String raceName, Location loc){

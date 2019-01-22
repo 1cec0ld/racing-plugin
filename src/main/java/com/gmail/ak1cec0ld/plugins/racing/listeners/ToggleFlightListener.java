@@ -5,8 +5,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import com.gmail.ak1cec0ld.plugins.racing.PlayerManager;
+import com.gmail.ak1cec0ld.plugins.racing.Racing;
 
 public class ToggleFlightListener implements Listener{
+
+    public ToggleFlightListener(Racing racing) {
+        racing.getServer().getPluginManager().registerEvents(this, racing);
+    }
 
     @EventHandler
     public void onToggleFly(PlayerToggleFlightEvent event){

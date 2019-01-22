@@ -6,9 +6,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 
 import com.gmail.ak1cec0ld.plugins.racing.PlayerManager;
+import com.gmail.ak1cec0ld.plugins.racing.Racing;
 
 public class GlideListener implements Listener{
     
+    public GlideListener(Racing racing) {
+        racing.getServer().getPluginManager().registerEvents(this, racing);
+    }
+
     @EventHandler
     public void onGlideToggle(EntityToggleGlideEvent event){
         if(!(event.getEntity() instanceof Player))return;
