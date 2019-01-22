@@ -37,7 +37,7 @@ public class MapManager {
                                 sign.setLine(2, "Foot Race");
                                 break;
                             case 1:
-                                sign.setLine(2, "Horse Race");
+                                sign.setLine(2, "Mounted Race");
                                 break;
                             case 2:
                                 sign.setLine(2, "Elytra Race");
@@ -68,26 +68,33 @@ public class MapManager {
     
     public static boolean createCheckpointSign(String raceName, Location loc, int index){
         Block current = loc.getBlock();
-        if(current.getType().equals(Material.SIGN) || current.getType().equals(Material.WALL_SIGN)){
+        if(!(current.getType().equals(Material.SIGN) || current.getType().equals(Material.WALL_SIGN))){
             plugin.warn("Tried to use a non-sign block for a checkpoint!");
             return false;
         }
         Sign sign = (Sign)current.getState();
+        if(sign.getLine(0).equalsIgnoreCase(raceName) || sign.getLine(1).equals("checkpoint")){
+            plugin.warn("Tried to overwrite an existing race text! Clear/Break it first!");
+            return false;
+        }
         sign.setLine(0, capitalize(raceName));
-        sign.setLine(1, "checkpoint");
+        sign.setLine(1, "§5checkpoint");
         sign.setLine(2, String.valueOf(index));
+        sign.update();
         return true;
     }
 
     public static void updateBoard(Location loc, String category, TreeMap<Integer,String> scores) {
+        plugin.info("updateboard " + scores.size());
         int col = 0;
         Block b = loc.getBlock();
+        Block target;
         Sign sign;
         switch(category){
             case "elytra":
                 col = 2;
                 break;
-            case "horse":
+            case "mounted":
                 col = 1;
                 break;
             case "foot":
@@ -96,9 +103,11 @@ public class MapManager {
         }
         int row = 2;
         for(Entry<Integer, String> winner : scores.entrySet()){
-            sign = (Sign)b.getRelative(col, row, 0).getState();
+            target = b.getRelative(-col,row,0);
+            sign = (Sign)target.getState();
             sign.setLine(1, winner.getValue());
             sign.setLine(2, String.valueOf(winner.getKey()));
+            sign.update();
             row--;
         }
     }

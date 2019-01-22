@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTeleportEvent;
 
+import com.gmail.ak1cec0ld.plugins.racing.PlayerManager;
 import com.gmail.ak1cec0ld.plugins.racing.Racing;
 
 public class TeleportListener implements Listener{
@@ -20,8 +21,8 @@ public class TeleportListener implements Listener{
     @EventHandler
     public void onTeleport(EntityTeleportEvent event){
         if(!(event.getEntity() instanceof Player))return;
-        if(!(plugin.isRacing((Player)event.getEntity())))return;
-        ((Player)event.getEntity()).sendMessage("Race Progress removed due to teleportation!");
-        plugin.disqualifyPlayer((Player)event.getEntity());
+        if(!(PlayerManager.isRacing((Player)event.getEntity())))return;
+        ((Player)event.getEntity()).sendMessage("Race Progress removed due to teleportation! Disqualified!");
+        PlayerManager.endRace((Player)event.getEntity());
     }
 }

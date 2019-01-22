@@ -1,10 +1,12 @@
 package com.gmail.ak1cec0ld.plugins.racing;
 
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import com.gmail.ak1cec0ld.plugins.racing.files.ConfigManager;
+import com.gmail.ak1cec0ld.plugins.racing.files.ResultManager;
 
 public class RaceManager {
     private static Racing plugin;
@@ -16,8 +18,8 @@ public class RaceManager {
     
     public static boolean createRace(String name, Location leaderboard){
         //create config entry
-        plugin.getConfigManager().setWorld(name, leaderboard.getWorld());
-        plugin.getConfigManager().setLeaderBoardLoc(name, leaderboard);
+        ConfigManager.setWorld(name, leaderboard.getWorld());
+        ConfigManager.setLeaderBoardLoc(name, leaderboard);
         //create signs
         if(!MapManager.createLeaderBoard(name, leaderboard)){
             plugin.warn("Tried to create an invalid leaderboard!");
@@ -27,26 +29,23 @@ public class RaceManager {
     }
     
     public static boolean addCheckpoint(String raceName, Location loc){
-        int count = plugin.getConfigManager().getCheckpointLocations(raceName).size();
-        plugin.getConfigManager().setCheckpoint(raceName, count+1, loc);
+        int count = ConfigManager.getCheckpointLocations(raceName).size();
+        if(!ConfigManager.setCheckpoint(raceName, count+1, loc)){
+            plugin.warn("Config file can't create checkpoint!");
+            return false;
+        }
         
         if(!MapManager.createCheckpointSign(raceName, loc, count)){
-            plugin.warn("Tried to create an invalid checkpoint!");
+            plugin.warn("Tried to create a checkpoint at an invalid spot!");
             return false;
         }
         return true;
     }
     
-    public static boolean newScore(String raceName, String category, Player player, int score){
-        TreeMap<Integer, String> old = plugin.getResultManager().getResults(raceName, category);
-        for(Entry<Integer,String> scorePlayer : old.entrySet()){
-            if(score < scorePlayer.getKey()){
-                old = plugin.getResultManager().updateResults(raceName, category, player.getName(), score);
-                Location loc = plugin.getConfigManager().getRaceLeaderboardLoc(raceName);
-                MapManager.updateBoard(loc, category, old);
-                return true;
-            }
-        }
-        return false;
+    public static void newScore(String raceName, String category, Player player, int score){
+        TreeMap<Integer, String> update;
+        update = ResultManager.updateResults(raceName, category, player.getName(), score);
+        Location loc = ConfigManager.getRaceLeaderboardLoc(raceName);
+        MapManager.updateBoard(loc, category, update);
     }
 }

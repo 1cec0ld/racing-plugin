@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 
 import com.gmail.ak1cec0ld.plugins.racing.RaceManager;
 import com.gmail.ak1cec0ld.plugins.racing.Racing;
+import com.gmail.ak1cec0ld.plugins.racing.files.ConfigManager;
+import com.gmail.ak1cec0ld.plugins.racing.files.ResultManager;
 
 import io.github.jorelali.commandapi.api.CommandAPI;
 import io.github.jorelali.commandapi.api.CommandPermission;
@@ -37,7 +39,7 @@ public class CommandListener {
     
     public CommandListener(Racing racing){
         plugin = racing;
-        arg1s = new ArrayList<String>(plugin.getResultManager().getRaceNames());
+        arg1s = new ArrayList<String>(ConfigManager.getRaceNames());
         initializeArguments();
     }
 
@@ -73,21 +75,19 @@ public class CommandListener {
         arguments = new LinkedHashMap<String, Argument>();
         arguments.put("action", new LiteralArgument("checkpoint"));
         arguments.put("Name", allRaceNames);
-        arguments.put("SignLocation", new LocationArgument());
+        arguments.put("SignLocation", new LocationArgument(LocationType.BLOCK_POSITION));
         registerCheckpoint();
     }
     
     private void registerAddwin(String category){
         CommandAPI.getInstance().register(COMMAND_ALIAS, CommandPermission.OP, ALIASES, arguments, (sender,args)->{
             sender.sendMessage("Added player " + ((Player)args[1]).getName() + " to race named " + args[0].toString() + " for category " + category + " with time " + (int)args[2]);
-            if(RaceManager.newScore(args[0].toString(), args[1].toString(), ((Player)args[2]), (int)args[3])){
-                sender.sendMessage("New High Score!");
-            }
+            RaceManager.newScore(args[0].toString(), category, ((Player)args[1]), (int)args[2]);
         });
     }
     private void registerResults(String category){
         CommandAPI.getInstance().register(COMMAND_ALIAS, ALIASES, arguments, (sender,args)->{
-            TreeMap<Integer, String> results = plugin.getResultManager().getResults(args[0].toString(), category);
+            TreeMap<Integer, String> results = ResultManager.getResults(args[0].toString(), category);
             sender.sendMessage("Results:");
             for(Entry<Integer, String> each : results.entrySet()){
                 sender.sendMessage(each.getValue() + " : " + each.getKey());

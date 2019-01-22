@@ -2,20 +2,21 @@ package com.gmail.ak1cec0ld.plugins.racing.files;
 
 import java.io.File;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
-
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.gmail.ak1cec0ld.plugins.racing.Racing;
 
+
+
 public class ResultManager {
-    private CustomYMLStorage yml;
-    private YamlConfiguration results;
     
-    private final int MAX_LEADERS_PER_GAMEMODE = 3;
+    private static CustomYMLStorage yml;
+    private static YamlConfiguration results;
+    
+    private final static int MAX_LEADERS_PER_GAMEMODE = 3;
     
     public ResultManager(Racing plugin){
         yml = new CustomYMLStorage(plugin,"Racing"+File.separator+"results.yml");
@@ -23,21 +24,14 @@ public class ResultManager {
         yml.save();
     }
     
-    public Set<String> getRaceNames(){
-        return results.getKeys(false);
-    }
-    
-    
-    public TreeMap<Integer,String> getResults(String raceName, String raceType){
+    public static TreeMap<Integer,String> getResults(String raceName, String raceType){
         return sortedMapFromConfigSection(results.getConfigurationSection(raceName+"."+raceType));
     }
     
-    public TreeMap<Integer,String> updateResults(String raceName, String raceType, String playerName, int time){
+    public static TreeMap<Integer,String> updateResults(String raceName, String raceType, String playerName, int time){
         ConfigurationSection winners = results.getConfigurationSection(raceName+"."+raceType);
         TreeMap<Integer,String> storage = sortedMapFromConfigSection(winners);
-
         storage = insertPlayerOverwriteHigher(time, playerName, storage);
-        
         ConfigurationSection newWinners = results.createSection(raceName+"."+raceType);
         
         int maxLeaders = MAX_LEADERS_PER_GAMEMODE;
@@ -49,10 +43,10 @@ public class ResultManager {
                 return subset(storage, 0, MAX_LEADERS_PER_GAMEMODE);
             }
         }
-        return null;
+        return storage;
     }
     
-    private TreeMap<Integer,String> sortedMapFromConfigSection(ConfigurationSection playersAndScores){
+    private static TreeMap<Integer,String> sortedMapFromConfigSection(ConfigurationSection playersAndScores){
         TreeMap<Integer,String> scoresAndPlayers = new TreeMap<Integer,String>();
         if(playersAndScores==null)return scoresAndPlayers;
         for(String playername : playersAndScores.getKeys(false)){
@@ -60,7 +54,7 @@ public class ResultManager {
         }
         return scoresAndPlayers;
     }
-    private TreeMap<Integer,String> insertPlayerOverwriteHigher(Integer time, String playername, TreeMap<Integer,String> startingMap){
+    private static TreeMap<Integer,String> insertPlayerOverwriteHigher(Integer time, String playername, TreeMap<Integer,String> startingMap){
         if(startingMap.containsValue(playername)){
             for(Entry<Integer, String> each : startingMap.entrySet()){
                 if(each.getValue().equals(playername)){
@@ -73,13 +67,13 @@ public class ResultManager {
         startingMap.put(time, playername);
         return startingMap;
     }
-    private <K,V> TreeMap<K,V> subset(TreeMap<K,V> tree, int startIndex, int endIndex){
+    private static <K,V> TreeMap<K,V> subset(TreeMap<K,V> tree, int startIndex, int endIndex){
         if(startIndex>tree.size())return null;
         if(endIndex>tree.size())return null;
         TreeMap<K,V> map = new TreeMap<K,V>();
         int index = 0;
         for(Entry<K, V> entry : tree.entrySet()){
-            if(index>=startIndex && endIndex<index){
+            if(index>=startIndex && endIndex>index){
                 map.put(entry.getKey(), entry.getValue());
                 if(index==endIndex)return map;
             }
