@@ -1,4 +1,4 @@
-package com.gmail.ak1cec0ld.plugins.racing;
+package com.gmail.ak1cec0ld.plugins.racing.files;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.gmail.ak1cec0ld.plugins.racing.Racing;
 
 
 
@@ -33,6 +35,7 @@ public class ConfigManager {
     public List<Location> getCheckpointLocations(String raceName){
         List<Location> points = new ArrayList<Location>();
         World raceWorld = Bukkit.getWorld(config.getString(raceName+".world"));
+        if(!config.contains(raceName+".checkpoints"))return points;
         for(String each : config.getConfigurationSection(raceName+".checkpoints").getKeys(false)){
             points.add(new Location(raceWorld,
                                     config.getInt(raceName+".checkpoints."+each+".x"),
@@ -45,6 +48,7 @@ public class ConfigManager {
     
     public void setWorld(String raceName, World world){
         config.set(raceName+ ".world", world.getName());
+        yml.save();
     }
     
     public boolean setCheckpoint(String raceName, int number, Location loc){
@@ -52,6 +56,7 @@ public class ConfigManager {
         config.set(raceName+".checkpoints."+number+".x", loc.getBlockX());
         config.set(raceName+".checkpoints."+number+".y", loc.getBlockY());
         config.set(raceName+".checkpoints."+number+".z", loc.getBlockZ());
+        yml.save();
         return true;
     }
     
@@ -60,6 +65,7 @@ public class ConfigManager {
         config.set(raceName+".leaderboard.x", loc.getBlockX());
         config.set(raceName+".leaderboard.y", loc.getBlockY());
         config.set(raceName+".leaderboard.z", loc.getBlockZ());
+        yml.save();
         return true;
     }
 }

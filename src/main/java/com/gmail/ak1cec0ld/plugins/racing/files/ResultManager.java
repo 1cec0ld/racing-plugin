@@ -1,4 +1,4 @@
-package com.gmail.ak1cec0ld.plugins.racing;
+package com.gmail.ak1cec0ld.plugins.racing.files;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -9,14 +9,13 @@ import java.util.TreeMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.gmail.ak1cec0ld.plugins.racing.CustomYMLStorage;
 import com.gmail.ak1cec0ld.plugins.racing.Racing;
 
 public class ResultManager {
     private CustomYMLStorage yml;
     private YamlConfiguration results;
     
-    private int MAX_LEADERS_PER_GAMEMODE = 3;
+    private final int MAX_LEADERS_PER_GAMEMODE = 3;
     
     public ResultManager(Racing plugin){
         yml = new CustomYMLStorage(plugin,"Racing"+File.separator+"results.yml");
@@ -33,7 +32,7 @@ public class ResultManager {
         return sortedMapFromConfigSection(results.getConfigurationSection(raceName+"."+raceType));
     }
     
-    public void updateResults(String raceName, String raceType, String playerName, int time){
+    public TreeMap<Integer,String> updateResults(String raceName, String raceType, String playerName, int time){
         ConfigurationSection winners = results.getConfigurationSection(raceName+"."+raceType);
         TreeMap<Integer,String> storage = sortedMapFromConfigSection(winners);
 
@@ -46,8 +45,11 @@ public class ResultManager {
             newWinners.set(each.getValue(), each.getKey());
             yml.save();
             maxLeaders--;
-            if(maxLeaders==0)return;
+            if(maxLeaders==0){
+                return subset(storage, 0, MAX_LEADERS_PER_GAMEMODE);
+            }
         }
+        return null;
     }
     
     private TreeMap<Integer,String> sortedMapFromConfigSection(ConfigurationSection playersAndScores){
@@ -70,6 +72,19 @@ public class ResultManager {
         }
         startingMap.put(time, playername);
         return startingMap;
+    }
+    private <K,V> TreeMap<K,V> subset(TreeMap<K,V> tree, int startIndex, int endIndex){
+        if(startIndex>tree.size())return null;
+        if(endIndex>tree.size())return null;
+        TreeMap<K,V> map = new TreeMap<K,V>();
+        int index = 0;
+        for(Entry<K, V> entry : tree.entrySet()){
+            if(index>=startIndex && endIndex<index){
+                map.put(entry.getKey(), entry.getValue());
+                if(index==endIndex)return map;
+            }
+        }
+        return map;
     }
 }
 /*

@@ -1,4 +1,4 @@
-package com.gmail.ak1cec0ld.plugins.racing;
+package com.gmail.ak1cec0ld.plugins.racing.files;
 
 import java.io.File;
 import java.io.IOException;

@@ -32,22 +32,24 @@ public class CommandListener {
     private String COMMAND_ALIAS = "race";
     private String[] ALIASES = {"racing"};
     private LinkedHashMap<String, Argument> arguments;
+    private List<String> arg1s;
+    DynamicSuggestedStringArgument allRaceNames;
     
     public CommandListener(Racing racing){
         plugin = racing;
+        arg1s = new ArrayList<String>(plugin.getResultManager().getRaceNames());
         initializeArguments();
     }
 
     public void initializeArguments(){
-        List<String> arg1s = new ArrayList<String>(plugin.getResultManager().getRaceNames());
-        DynamicSuggestedStringArgument dynSSArg = new DynamicSuggestedStringArgument(() -> {
+        allRaceNames = new DynamicSuggestedStringArgument(() -> {
             return arg1s.toArray(new String[arg1s.size()]);
         });
         Set<String> arg2s = new HashSet<String>(Arrays.asList("elytra","horse","foot"));
         for(String category : arg2s){
             arguments = new LinkedHashMap<String, Argument>();
             arguments.put("action", new LiteralArgument("addwin"));
-            arguments.put("suggested", dynSSArg);
+            arguments.put("Name", allRaceNames);
             arguments.put("category", new LiteralArgument(category));
             arguments.put("winner", new PlayerArgument());
             arguments.put("time", new IntegerArgument(0));
@@ -56,7 +58,7 @@ public class CommandListener {
         for(String category : arg2s){
             arguments = new LinkedHashMap<String, Argument>();
             arguments.put("action", new LiteralArgument("results"));
-            arguments.put("suggested", dynSSArg);
+            arguments.put("Name", allRaceNames);
             arguments.put("category", new LiteralArgument(category));
             registerResults(category);
         }
@@ -70,15 +72,17 @@ public class CommandListener {
         registerCreate();
         arguments = new LinkedHashMap<String, Argument>();
         arguments.put("action", new LiteralArgument("checkpoint"));
-        arguments.put("Name", new StringArgument());
+        arguments.put("Name", allRaceNames);
         arguments.put("SignLocation", new LocationArgument());
         registerCheckpoint();
     }
     
     private void registerAddwin(String category){
         CommandAPI.getInstance().register(COMMAND_ALIAS, CommandPermission.OP, ALIASES, arguments, (sender,args)->{
-            plugin.getResultManager().updateResults(args[0].toString(), category, ((Player)args[1]).getName(), (int)args[2]);
             sender.sendMessage("Added player " + ((Player)args[1]).getName() + " to race named " + args[0].toString() + " for category " + category + " with time " + (int)args[2]);
+            if(RaceManager.newScore(args[0].toString(), args[1].toString(), ((Player)args[2]), (int)args[3])){
+                sender.sendMessage("New High Score!");
+            }
         });
     }
     private void registerResults(String category){
@@ -98,16 +102,22 @@ public class CommandListener {
     }
     private void registerCreate(){
         CommandAPI.getInstance().register(COMMAND_ALIAS, CommandPermission.OP, ALIASES, arguments, (sender,args)->{
+            if(!RaceManager.createRace(args[0].toString(), (Location)args[1])){
+                sender.sendMessage("Error! See console!");
+                return;
+            }
             sender.sendMessage("Created a new race! Name: " + args[0].toString());
-            Location board = (Location)args[1];
-            RaceManager.createRace(args[0].toString(), board);
+            arg1s.add(args[0].toString());
+
         });
     }
     private void registerCheckpoint(){
         CommandAPI.getInstance().register(COMMAND_ALIAS, CommandPermission.OP, ALIASES, arguments, (sender,args)->{
-            int count = plugin.getConfigManager().getCheckpointLocations(args[0].toString()).size();
-            sender.sendMessage("Checkpoint " + (count+1) + " set");
-            plugin.getConfigManager().setCheckpoint(args[0].toString(), count+1, (Location)args[1]);
+            if(!RaceManager.addCheckpoint(args[0].toString(), (Location)args[1])){
+                sender.sendMessage("Error! See console!");
+                return;
+            }
+            sender.sendMessage("Checkpoint set!");
         });
     }
 }
