@@ -20,5 +20,4 @@ public class GlideListener implements Listener{
         if(!PlayerManager.isRacing((Player)event.getEntity()))return;
         PlayerManager.setCategory((Player)event.getEntity(), "elytra");
     }
-    
 }

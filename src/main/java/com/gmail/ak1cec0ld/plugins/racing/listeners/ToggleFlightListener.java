@@ -17,7 +17,6 @@ public class ToggleFlightListener implements Listener{
     public void onToggleFly(PlayerToggleFlightEvent event){
         if(!PlayerManager.isRacing(event.getPlayer()))return;
         PlayerManager.endRace(event.getPlayer());
-        event.getPlayer().sendMessage("Race Progress removed due to flight detection! Disqualified!");
+        event.getPlayer().sendMessage("Race Progress removed due to flymode detection! Disqualified!");
     }
-    
 }

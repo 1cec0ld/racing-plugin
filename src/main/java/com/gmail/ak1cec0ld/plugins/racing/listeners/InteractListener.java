@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import com.gmail.ak1cec0ld.plugins.racing.PlayerManager;
 import com.gmail.ak1cec0ld.plugins.racing.RaceManager;
@@ -30,8 +31,9 @@ public class InteractListener implements Listener{
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
         Player player = event.getPlayer();
-        if(player.isFlying())return;
         if(!player.getGameMode().equals(GameMode.SURVIVAL))return;
+        if(player.isFlying() || player.getAllowFlight())return;
+        if(!event.getHand().equals(EquipmentSlot.HAND))return;
         if(!(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)))return;
         Block hitblock = event.getClickedBlock();
         if(!(hitblock.getType().equals(Material.WALL_SIGN) || hitblock.getType().equals(Material.SIGN)))return;
@@ -43,15 +45,16 @@ public class InteractListener implements Listener{
     private void processRaceInteract(Player player, Sign sign){
         switch(sign.getLine(0)){
             case "§2[Begin Race]":
-                if(ConfigManager.getRaceNames().contains(sign.getLine(1))){
-                    player.sendMessage("§lGO!");
+                if(ConfigManager.getRaceNames().contains(sign.getLine(1).toLowerCase())){
                     PlayerManager.startRace(player, sign.getLine(1));
+                    player.sendMessage("You qualify for the " + capitalize(PlayerManager.getCategory(player)) + " category!");
+                    player.sendMessage("§lGO!");
                 } else {
                     plugin.warn("Unsupported Racing Sign at " + sign.getLocation().toString());
                 }
                 break;
             case "§2[End Race]":
-                if(ConfigManager.getRaceNames().contains(sign.getLine(1))){
+                if(ConfigManager.getRaceNames().contains(sign.getLine(1).toLowerCase())){
                     if(!PlayerManager.isRacing(player))return;
                     if(!PlayerManager.getRaceName(player).equalsIgnoreCase(sign.getLine(1)))return;
                     if(PlayerManager.getCheckpoint(player)!=ConfigManager.getCheckpointCount(sign.getLine(1))){
@@ -89,7 +92,7 @@ public class InteractListener implements Listener{
             return;
         }
         if(score > MAX_TIME_ALLOWED){ //if theyve been going over an hour, DQ)
-            player.sendMessage("You spent too long, it's been over an hour since you started the race! Disqualified.");
+            player.sendMessage("You spent too long, it's been over an hour since you started the race! Disqualified!");
             PlayerManager.endRace(player);
             return;
         }
@@ -98,5 +101,8 @@ public class InteractListener implements Listener{
         player.sendMessage("Check the leaderboard to find out if you got a rank!");
         RaceManager.newScore(PlayerManager.getRaceName(player), PlayerManager.getCategory(player), player, score);
         PlayerManager.endRace(player);
+    }
+    private static String capitalize(String input){
+        return input.substring(0, 1).toUpperCase()+input.substring(1, input.length());
     }
 }

@@ -1,6 +1,7 @@
 package com.gmail.ak1cec0ld.plugins.racing.listeners;
 
-import org.bukkit.entity.Mob;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
@@ -21,13 +22,20 @@ public class MountListener implements Listener{
     public void onMountEntity(EntityMountEvent event){
         if(!(event.getEntity() instanceof Player))return;
         if(!PlayerManager.isRacing((Player)event.getEntity()))return;
-        if(!(event.getMount() instanceof Vehicle && event.getMount() instanceof Mob)){
+        if(!(event.getMount() instanceof Vehicle)){
             ((Player)event.getEntity()).sendMessage("You can only ride vanilla-rideable animals for these races! Disqualified!");
             PlayerManager.endRace((Player)event.getEntity());
+            return;
         }
-        if(!PlayerManager.getCategory((Player)event.getEntity()).equals("elytra")){ //if it's elytra, keep it that way
-            PlayerManager.setCategory((Player)event.getEntity(), "mounted");
+        Vehicle entity = (Vehicle) event.getMount();
+        String newCategory = "";
+        if(entity instanceof Boat){
+            newCategory = "boat";
+        } else if(entity instanceof Pig){
+            newCategory = "pig";
+        } else {
+            newCategory = "mounted";
         }
+        PlayerManager.setCategory((Player)event.getEntity(), newCategory);
     }
-    
 }

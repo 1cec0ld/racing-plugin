@@ -10,6 +10,8 @@ import org.bukkit.block.Sign;
 
 public class MapManager {
     static Racing plugin;
+
+    
     
     public MapManager(Racing racing){
         plugin = racing;
@@ -20,7 +22,7 @@ public class MapManager {
         Sign sign;
         board.getBlock().setType(Material.AIR);
         for(int row = 0; row < 4; row++){
-            for(int col = 0; col < 3; col++){
+            for(int col = 0; col < plugin.getCategories().size(); col++){
                 current = board.getBlock().getRelative(-col, row, 0); //facing North is default; subtract X to go left->right
                 
                 if(!current.getType().equals(Material.AIR)){
@@ -32,17 +34,7 @@ public class MapManager {
                 switch(row){
                     case 3:
                         sign.setLine(0, capitalize(raceName));
-                        switch(col){
-                            case 0:
-                                sign.setLine(2, "Foot Race");
-                                break;
-                            case 1:
-                                sign.setLine(2, "Mounted Race");
-                                break;
-                            case 2:
-                                sign.setLine(2, "Elytra Race");
-                                break;
-                        }
+                        sign.setLine(2, capitalize(plugin.getCategories().get(col))+" Race");
                         break;
                     case 2:
                         sign.setLine(0, "First Place:");
@@ -89,17 +81,7 @@ public class MapManager {
         Block b = loc.getBlock();
         Block target;
         Sign sign;
-        switch(category){
-            case "elytra":
-                col = 2;
-                break;
-            case "mounted":
-                col = 1;
-                break;
-            case "foot":
-                col = 0;
-                break;
-        }
+        col = plugin.getCategories().indexOf(category);
         int row = 2;
         for(Entry<Integer, String> winner : scores.entrySet()){
             target = b.getRelative(-col,row,0);
