@@ -23,12 +23,12 @@ public class MountListener implements Listener{
         if(!(event.getEntity() instanceof Player))return;
         if(!PlayerManager.isRacing((Player)event.getEntity()))return;
         if(!(event.getMount() instanceof Vehicle)){
-            ((Player)event.getEntity()).sendMessage("You can only ride vanilla-rideable animals for these races! Disqualified!");
+            event.getEntity().sendMessage("You can only ride vanilla-rideable animals for these races! Disqualified!");
             PlayerManager.endRace((Player)event.getEntity());
             return;
         }
         Vehicle entity = (Vehicle) event.getMount();
-        String newCategory = "";
+        String newCategory;
         if(entity instanceof Boat){
             newCategory = "boat";
         } else if(entity instanceof Pig){

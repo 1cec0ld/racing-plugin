@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../pokemonids-plugin/pokemonids-plugin.iml" filepath="$PROJECT_DIR$/../pokemonids-plugin/pokemonids-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/racing-plugin.iml" filepath="$PROJECT_DIR$/racing-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../test-plugin/test-plugin.iml" filepath="$PROJECT_DIR$/../test-plugin/test-plugin.iml" />
+    </modules>
+  </component>
+</project>

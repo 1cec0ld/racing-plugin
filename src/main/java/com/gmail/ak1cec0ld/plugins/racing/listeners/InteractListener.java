@@ -44,16 +44,16 @@ public class InteractListener implements Listener{
     
     private void processRaceInteract(Player player, Sign sign){
         switch(sign.getLine(0)){
-            case "§2[Begin Race]":
+            case ChatColor.COLOR_CHAR+"2[Begin Race]":
                 if(ConfigManager.getRaceNames().contains(sign.getLine(1).toLowerCase())){
                     PlayerManager.startRace(player, sign.getLine(1));
                     player.sendMessage("You qualify for the " + capitalize(PlayerManager.getCategory(player)) + " category!");
-                    player.sendMessage("§lGO!");
+                    player.sendMessage(ChatColor.COLOR_CHAR+"lGO!");
                 } else {
                     plugin.warn("Unsupported Racing Sign at " + sign.getLocation().toString());
                 }
                 break;
-            case "§2[End Race]":
+            case ChatColor.COLOR_CHAR+"2[End Race]":
                 if(ConfigManager.getRaceNames().contains(sign.getLine(1).toLowerCase())){
                     if(!PlayerManager.isRacing(player))return;
                     if(!PlayerManager.getRaceName(player).equalsIgnoreCase(sign.getLine(1)))return;
@@ -67,20 +67,18 @@ public class InteractListener implements Listener{
                 }
                 break;
         }
-        switch(sign.getLine(1)){
-            case "§5checkpoint":
-                if(ConfigManager.getRaceNames().contains(sign.getLine(0).toLowerCase())){
-                    int number = Integer.valueOf(sign.getLine(2));
-                    if(PlayerManager.getCheckpoint(player) == number-1){
-                        PlayerManager.setCheckpoint(player, number);
-                        player.sendMessage("Checkpoint hit! Keep going!");
-                    } else {
-                        player.sendMessage("Wrong Checkpoint! Find number " + (PlayerManager.getCheckpoint(player)+1) + "!");
-                    }
+        if ((ChatColor.COLOR_CHAR + "5checkpoint").equals(sign.getLine(1))) {
+            if (ConfigManager.getRaceNames().contains(sign.getLine(0).toLowerCase())) {
+                int number = Integer.valueOf(sign.getLine(2));
+                if (PlayerManager.getCheckpoint(player) == number - 1) {
+                    PlayerManager.setCheckpoint(player, number);
+                    player.sendMessage("Checkpoint hit! Keep going!");
                 } else {
-                    plugin.warn("Why is a checkpoint showing for an invalid race?");
+                    player.sendMessage("Wrong Checkpoint! Find number " + (PlayerManager.getCheckpoint(player) + 1) + "!");
                 }
-                break;
+            } else {
+                plugin.warn("Why is a checkpoint showing for an invalid race?");
+            }
         }
     }
     
@@ -103,6 +101,6 @@ public class InteractListener implements Listener{
         PlayerManager.endRace(player);
     }
     private static String capitalize(String input){
-        return input.substring(0, 1).toUpperCase()+input.substring(1, input.length());
+        return input.substring(0, 1).toUpperCase()+input.substring(1);
     }
 }

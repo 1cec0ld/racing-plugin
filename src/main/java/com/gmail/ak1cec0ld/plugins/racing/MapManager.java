@@ -2,7 +2,9 @@ package com.gmail.ak1cec0ld.plugins.racing;
 
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -70,7 +72,7 @@ public class MapManager {
             return false;
         }
         sign.setLine(0, capitalize(raceName));
-        sign.setLine(1, "§5checkpoint");
+        sign.setLine(1, ChatColor.COLOR_CHAR+"5checkpoint");
         sign.setLine(2, String.valueOf(index));
         sign.update();
         return true;
@@ -87,13 +89,21 @@ public class MapManager {
             target = b.getRelative(-col,row,0);
             sign = (Sign)target.getState();
             sign.setLine(1, winner.getValue());
-            sign.setLine(2, String.valueOf(winner.getKey()));
+            sign.setLine(2, displayFromMillis(winner.getKey()));
             sign.update();
             row--;
         }
     }
     
     private static String capitalize(String input){
-        return input.substring(0, 1).toUpperCase()+input.substring(1, input.length());
+        return input.substring(0, 1).toUpperCase()+input.substring(1);
+    }
+
+    private static String displayFromMillis(long duration){
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(duration)-TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration));
+        long millis  = TimeUnit.MILLISECONDS.toMillis(duration)-TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(duration));
+
+        return String.format("%dm %ds %dms", minutes, seconds, millis);
     }
 }
