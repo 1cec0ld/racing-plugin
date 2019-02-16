@@ -2,6 +2,7 @@ package com.gmail.ak1cec0ld.plugins.racing.listeners;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
@@ -13,17 +14,24 @@ import com.gmail.ak1cec0ld.plugins.racing.PlayerManager;
 import com.gmail.ak1cec0ld.plugins.racing.Racing;
 
 public class TeleportListener implements Listener{
+
+    private Racing plugin;
         
     public TeleportListener(Racing racing) {
         racing.getServer().getPluginManager().registerEvents(this, racing);
+        this.plugin = racing;
     }
     
     
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event){
         if(!(PlayerManager.isRacing(event.getPlayer())))return;
-        if(event.getCause().equals(TeleportCause.COMMAND) || isNearVehicle(event.getPlayer()))return; //we only ignore tp's during races if via vanilla commandblocks or onto vehicles
-        PlayerManager.setCategory(event.getPlayer(), "teleport");
+        if(PlayerManager.hasTeleportWorkaround(event.getPlayer()) || isNearVehicle(event.getPlayer()))return; //we only ignore tp's during races if via vanilla commandblocks or onto vehicles
+        if(event.getCause().equals(TeleportCause.COMMAND)){
+            PlayerManager.setTeleportWorkaround(event.getPlayer());
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> PlayerManager.hasTeleportWorkaround(event.getPlayer()),5L);
+        }
+                PlayerManager.setCategory(event.getPlayer(), "teleport");
     }
     
     private Boolean isNearVehicle(Entity loc){

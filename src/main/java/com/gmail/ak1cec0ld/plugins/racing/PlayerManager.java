@@ -1,5 +1,6 @@
 package com.gmail.ak1cec0ld.plugins.racing;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.bukkit.Material;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
@@ -29,6 +30,7 @@ public class PlayerManager {
         player.removeMetadata("race_raceTime", plugin);
         player.removeMetadata("race_checkpoint", plugin);
         player.removeMetadata("race_category", plugin);
+        player.removeMetadata("race_workaround", plugin);
     }
     public static void setCheckpoint(Player player, int point){
         if(isRacing(player)){
@@ -56,6 +58,17 @@ public class PlayerManager {
         player.sendMessage("You've been upgraded to the " + capitalize(category) + " Category!");
         plugin.debug("Set " + player.getDisplayName() + " category to " + category);
     }
+
+    public static void setTeleportWorkaround(Player player){
+        player.setMetadata("race_workaround", new FixedMetadataValue(plugin, System.currentTimeMillis()));
+    }
+    public static Boolean hasTeleportWorkaround(Player player){
+        if(player.getMetadata("race_workaround").get(0).asLong() > 0){
+            player.removeMetadata("race_workaround", plugin);
+            return true;
+        }
+        return false;
+    }
     
     
     
@@ -66,8 +79,8 @@ public class PlayerManager {
                player.hasMetadata("race_category");
     }
     
-    public static String getPlayerStartCategory(Player player){
-        if (player.getInventory().getChestplate()!=null && player.getInventory().getChestplate().equals(Material.ELYTRA))return "elytra";
+    private static String getPlayerStartCategory(Player player){
+        if (player.getInventory().getChestplate()!=null && player.getInventory().getChestplate().getType().equals(Material.ELYTRA))return "elytra";
         Entity vehicle = player.getVehicle();
         if(vehicle != null){
             if (vehicle instanceof Pig) return "pig";
@@ -78,6 +91,6 @@ public class PlayerManager {
         return "foot";
     }
     private static String capitalize(String input){
-        return input.substring(0, 1).toUpperCase()+input.substring(1, input.length());
+        return input.substring(0, 1).toUpperCase()+input.substring(1);
     }
 }
