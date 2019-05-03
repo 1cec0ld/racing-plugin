@@ -1,6 +1,5 @@
 package com.gmail.ak1cec0ld.plugins.racing;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.bukkit.Material;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
