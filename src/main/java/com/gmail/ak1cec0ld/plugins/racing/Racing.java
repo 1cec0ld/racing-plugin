@@ -14,6 +14,7 @@ import com.gmail.ak1cec0ld.plugins.racing.listeners.GlideListener;
 import com.gmail.ak1cec0ld.plugins.racing.listeners.InteractListener;
 import com.gmail.ak1cec0ld.plugins.racing.listeners.MountListener;
 import com.gmail.ak1cec0ld.plugins.racing.listeners.PotionSplashListener;
+import com.gmail.ak1cec0ld.plugins.racing.listeners.PreCommandListener;
 import com.gmail.ak1cec0ld.plugins.racing.listeners.RipTideListener;
 import com.gmail.ak1cec0ld.plugins.racing.listeners.TeleportListener;
 import com.gmail.ak1cec0ld.plugins.racing.listeners.ToggleFlightListener;
@@ -27,7 +28,6 @@ public class Racing extends JavaPlugin{
     }
     
     //todo:
-    //  Fix Commandblock Teleports Reverting to Teleport category when the target is in another chunk
     //  Allow for multiple directions for the Leaderboard to face based on player facing direction
     
     public void reloadPlugin(){
@@ -45,6 +45,7 @@ public class Racing extends JavaPlugin{
         new GlideListener(this);
         new RipTideListener(this);
         new TeleportListener(this);
+        new PreCommandListener(this);
         new ToggleFlightListener(this);
         
         DEBUGGING = ConfigManager.getDebugging();

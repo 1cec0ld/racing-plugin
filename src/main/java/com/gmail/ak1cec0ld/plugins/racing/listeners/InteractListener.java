@@ -33,7 +33,7 @@ public class InteractListener implements Listener{
         Player player = event.getPlayer();
         if(!player.getGameMode().equals(GameMode.SURVIVAL))return;
         if(player.isFlying() || player.getAllowFlight())return;
-        if(!event.getHand().equals(EquipmentSlot.HAND))return;
+        if((event.getHand()==null || !event.getHand().equals(EquipmentSlot.HAND)))return;
         if(!(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)))return;
         Block hitblock = event.getClickedBlock();
         if(!(hitblock.getType().equals(Material.WALL_SIGN) || hitblock.getType().equals(Material.SIGN)))return;

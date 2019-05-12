@@ -1,6 +1,5 @@
 package com.gmail.ak1cec0ld.plugins.racing;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.bukkit.Material;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
@@ -58,20 +57,22 @@ public class PlayerManager {
         player.sendMessage("You've been upgraded to the " + capitalize(category) + " Category!");
         plugin.debug("Set " + player.getDisplayName() + " category to " + category);
     }
-
-    public static void setTeleportWorkaround(Player player){
-        player.setMetadata("race_workaround", new FixedMetadataValue(plugin, System.currentTimeMillis()));
+    public static void setCommandSent(Player player){
+        player.setMetadata("race_workaround", new FixedMetadataValue(plugin, true));
+        plugin.debug("Added CommandSent Marker to " + player.getName());
     }
-    public static Boolean hasTeleportWorkaround(Player player){
-        if(player.getMetadata("race_workaround").get(0).asLong() > 0){
+    public static Boolean hasCommandSent(Player player){
+        if(player.hasMetadata("race_workaround")){
             player.removeMetadata("race_workaround", plugin);
+            plugin.debug("Found CommandSent Marker on " + player.getName());
             return true;
         }
         return false;
     }
-    
-    
-    
+    public static void removeCommandSent(Player player) {
+        plugin.debug("Removed CommandSent Marker from " + player.getName());
+        player.removeMetadata("race_workaround", plugin);
+    }
     public static boolean isRacing(Player player) {
         return player.hasMetadata("race_racingGame") && 
                player.hasMetadata("race_checkpoint") && 

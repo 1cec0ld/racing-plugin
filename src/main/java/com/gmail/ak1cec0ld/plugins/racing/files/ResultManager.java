@@ -29,6 +29,7 @@ public class ResultManager {
     }
     
     public static TreeMap<Integer,String> updateResults(String raceName, String raceType, String playerName, int time){
+        //Bukkit.getLogger().info(time + " time sent");
         ConfigurationSection winners = results.getConfigurationSection(raceName+"."+raceType);
         TreeMap<Integer,String> storage = sortedMapFromConfigSection(winners);
         storage = insertPlayerOverwriteHigher(time, playerName, storage);

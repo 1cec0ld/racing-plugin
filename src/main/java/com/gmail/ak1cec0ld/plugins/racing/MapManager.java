@@ -41,17 +41,17 @@ public class MapManager {
                     case 2:
                         sign.setLine(0, "First Place:");
                         sign.setLine(1, "Player");
-                        sign.setLine(2, Integer.MAX_VALUE+"");
+                        sign.setLine(2, displayFromMillis(600000000));
                         break;
                     case 1:
                         sign.setLine(0, "Second Place:");
                         sign.setLine(1, "Player");
-                        sign.setLine(2, Integer.MAX_VALUE+"");
+                        sign.setLine(2, displayFromMillis(600000000));
                         break;
                     case 0:
                         sign.setLine(0, "Third Place:");
                         sign.setLine(1, "Player");
-                        sign.setLine(2, Integer.MAX_VALUE+"");
+                        sign.setLine(2, displayFromMillis(600000000));
                         break;
                 }
                 sign.update();
@@ -85,6 +85,7 @@ public class MapManager {
         Sign sign;
         col = plugin.getCategories().indexOf(category);
         int row = 2;
+        plugin.debug("Size of scores in MapManager.updateBoard: " + scores.size());
         for(Entry<Integer, String> winner : scores.entrySet()){
             target = b.getRelative(-col,row,0);
             sign = (Sign)target.getState();
