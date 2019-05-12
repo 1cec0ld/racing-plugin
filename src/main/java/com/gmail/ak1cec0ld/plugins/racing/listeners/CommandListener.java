@@ -21,21 +21,18 @@ public class CommandListener {
     private String[] ALIASES = {"racing"};
     private LinkedHashMap<String, Argument> arguments;
     private List<String> arg1s;
-    DynamicSuggestedStringArgument allRaceNames;
-    
+
     public CommandListener(Racing racing){
         plugin = racing;
-        arg1s = new ArrayList<String>(ConfigManager.getRaceNames());
+        arg1s = new ArrayList<>(ConfigManager.getRaceNames());
         initializeArguments();
     }
 
-    public void initializeArguments(){
-        allRaceNames = new DynamicSuggestedStringArgument(() -> {
-            return arg1s.toArray(new String[arg1s.size()]);
-        });
-        Set<String> arg2s = new HashSet<String>(Arrays.asList("elytra","horse","foot"));
+    private void initializeArguments(){
+        DynamicSuggestedStringArgument allRaceNames = new DynamicSuggestedStringArgument(() -> arg1s.toArray(new String[0]));
+        Set<String> arg2s = new HashSet<>(Arrays.asList("elytra","horse","foot"));
         for(String category : arg2s){
-            arguments = new LinkedHashMap<String, Argument>();
+            arguments = new LinkedHashMap<>();
             arguments.put("action", new LiteralArgument("addwin"));
             arguments.put("Name", allRaceNames);
             arguments.put("category", new LiteralArgument(category));
@@ -44,21 +41,21 @@ public class CommandListener {
             registerAddwin(category);
         }
         for(String category : arg2s){
-            arguments = new LinkedHashMap<String, Argument>();
+            arguments = new LinkedHashMap<>();
             arguments.put("action", new LiteralArgument("results"));
             arguments.put("Name", allRaceNames);
             arguments.put("category", new LiteralArgument(category));
             registerResults(category);
         }
-        arguments = new LinkedHashMap<String, Argument>();
+        arguments = new LinkedHashMap<>();
         arguments.put("action", new LiteralArgument("reload"));
         registerReload();
-        arguments = new LinkedHashMap<String, Argument>();
+        arguments = new LinkedHashMap<>();
         arguments.put("action", new LiteralArgument("create"));
         arguments.put("Name", new StringArgument());
         arguments.put("LeaderBoardLoc", new LocationArgument(LocationType.BLOCK_POSITION));
         registerCreate();
-        arguments = new LinkedHashMap<String, Argument>();
+        arguments = new LinkedHashMap<>();
         arguments.put("action", new LiteralArgument("checkpoint"));
         arguments.put("Name", allRaceNames);
         arguments.put("SignLocation", new LocationArgument(LocationType.BLOCK_POSITION));
@@ -67,7 +64,7 @@ public class CommandListener {
     
     private void registerAddwin(String category){
         CommandAPI.getInstance().register(COMMAND_ALIAS, CommandPermission.OP, ALIASES, arguments, (sender,args)->{
-            sender.sendMessage("Added player " + ((Player)args[1]).getName() + " to race named " + args[0].toString() + " for category " + category + " with time " + (int)args[2]);
+            sender.sendMessage("Added player " + ((Player)args[1]).getName() + " to race named " + args[0].toString() + " for category " + category + " with time " + args[2]);
             RaceManager.newScore(args[0].toString(), category, ((Player)args[1]), (int)args[2]);
         });
     }
