@@ -1,32 +1,18 @@
 package com.gmail.ak1cec0ld.plugins.racing.listeners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import com.gmail.ak1cec0ld.plugins.racing.RaceManager;
 import com.gmail.ak1cec0ld.plugins.racing.Racing;
 import com.gmail.ak1cec0ld.plugins.racing.files.ConfigManager;
 import com.gmail.ak1cec0ld.plugins.racing.files.ResultManager;
-
 import io.github.jorelali.commandapi.api.CommandAPI;
 import io.github.jorelali.commandapi.api.CommandPermission;
-import io.github.jorelali.commandapi.api.arguments.Argument;
-import io.github.jorelali.commandapi.api.arguments.DynamicSuggestedStringArgument;
-import io.github.jorelali.commandapi.api.arguments.IntegerArgument;
-import io.github.jorelali.commandapi.api.arguments.LiteralArgument;
-import io.github.jorelali.commandapi.api.arguments.LocationArgument;
-import io.github.jorelali.commandapi.api.arguments.PlayerArgument;
-import io.github.jorelali.commandapi.api.arguments.StringArgument;
+import io.github.jorelali.commandapi.api.arguments.*;
 import io.github.jorelali.commandapi.api.arguments.LocationArgument.LocationType;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class CommandListener {
     private Racing plugin;
